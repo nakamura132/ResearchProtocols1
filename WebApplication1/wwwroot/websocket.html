@@ -11,14 +11,54 @@
             border: 1px solid #ccc;
             padding: 10px;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
-    <h1>WebSocketの例</h1>
-    <button id="startButton" onclick="startWebSocket()">開始</button>
-    <button id="stopButton" onclick="stopWebSocket()" disabled>停止</button>
-    <div id="status">ステータス: 未接続</div>
-    <div id="messages"></div>
+    <!-- ステータス表示 -->
+    <div>ステータスラベル: <span id="statusLabel">未接続</span></div>
+
+    <!-- WebSocketエンドポイントと接続・切断ボタン -->
+    <div>
+        <label for="url">WebSocketエンドポイント: </label>
+        <input type="text" id="url" value="ws://localhost:5000/api/websocket/connect">
+        <button id="connectButton" onclick="connectWebSocket()">接続</button>
+        <button id="disconnectButton" onclick="disconnectWebSocket()" disabled>切断</button>
+    </div>
+
+    <!-- メッセージ送信 -->
+    <div>
+        <input type="text" id="messageBox">
+        <button id="sendButton" onclick="sendMessage()" disabled>送信</button>
+        <button id="clearButton" onclick="clearMessage()">クリア</button>
+    </div>
+
+    <br>
+
+    <!-- 通信ログ -->
+    <div>通信ログ:</div>
+    <table>
+        <thead>
+            <tr>
+                <th>クライアント</th>
+                <th>サーバー</th>
+                <th>データ</th>
+            </tr>
+        </thead>
+        <tbody id="logTableBody">
+            <!-- 初期状態では空 -->
+        </tbody>
+    </table>
 
     <script src="websocket.js"></script>
 </body>

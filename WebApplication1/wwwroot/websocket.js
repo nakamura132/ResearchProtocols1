@@ -1,51 +1,138 @@
 ﻿let socket;
-const messagesDiv = document.getElementById('messages');
-const statusDiv = document.getElementById('status');
-const startButton = document.getElementById('startButton');
-const stopButton = document.getElementById('stopButton');
+const statusLabel = document.getElementById('statusLabel');
+const urlBox = document.getElementById('url');
+const connectButton = document.getElementById('connectButton');
+const disconnectButton = document.getElementById('disconnectButton');
+const messageBox = document.getElementById('messageBox');
+const sendButton = document.getElementById('sendButton');
+const clearButton = document.getElementById('clearButton');
+const logTableBody = document.getElementById('logTableBody');
 
-// WebSocket接続のURLを動的に生成する関数
-function getWebSocketUrl() {
-    // 現在のプロトコルに基づいてWebSocketのプロトコルを決定
-    const protocolPrefix = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
-
-    // ホストとAPIエンドポイントを組み合わせ
-    return protocolPrefix + window.location.host + '/api/websocket/connect';
-}
-
-// WebSocket接続を開始する関数
-function startWebSocket() {
-    socket = new WebSocket(getWebSocketUrl());
-
-    socket.onopen = function () {
-        statusDiv.innerText = 'ステータス: 接続中';
-        startButton.disabled = true;
-        stopButton.disabled = false;
-    };
-
-    socket.onmessage = function (event) {
-        const messageElement = document.createElement('div');
-        messageElement.innerText = event.data;
-        messagesDiv.appendChild(messageElement);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // 受信するたびにスクロールを最下部に
-    };
-
-    socket.onclose = function () {
-        updateUI('切断', false, true);
-    };
-}
-
-// WebSocket接続を終了する関数
-function stopWebSocket() {
-    if (socket) {
-        socket.close();
-        //updateUI('切断', false, true);  // 直接UIを更新
+/// <summary>
+/// WebSocketの接続状態に合わせてUIを更新する関数
+/// </summary>
+function updateState() {
+    switch (socket.readyState) {
+        case WebSocket.CLOSING:
+            statusLabel.innerText = '切断中';
+            setUIState(false, false, false, false, false);
+            break;
+        case WebSocket.CLOSED:
+            statusLabel.innerText = '未接続';
+            setUIState(false, false, false, true, true);
+            break;
+        case WebSocket.CONNECTING:
+            statusLabel.innerText = '接続試行中';
+            setUIState(false, false, false, false, false);
+            break;
+        case WebSocket.OPEN:
+            statusLabel.innerText = '接続確立中';
+            setUIState(true, true, true, false, false);
+            break;
+        default:
+            statusLabel.innerText = `不明なWebSocketステータス：${socket.readyState}`;
+            break;
     }
 }
 
-// UIの状態を更新する共通関数
-function updateUI(statusText, startDisabled, stopDisabled) {
-    statusDiv.innerText = `ステータス: ${statusText}`;
-    startButton.disabled = startDisabled;
-    stopButton.disabled = stopDisabled;
+/// <summary>
+/// UIの各要素の有効/無効状態を設定する関数
+/// </summary>
+function setUIState(messageBoxEnabled, sendButtonEnabled, disconnectButtonEnabled, urlBoxEnabled, connectButtonEnabled) {
+    messageBox.disabled = !messageBoxEnabled;
+    sendButton.disabled = !sendButtonEnabled;
+    disconnectButton.disabled = !disconnectButtonEnabled;
+    urlBox.disabled = !urlBoxEnabled;
+    connectButton.disabled = !connectButtonEnabled;
 }
+
+/// <summary>
+/// WebSocket接続を開始する関数
+/// </summary>
+function connectWebSocket() {
+    statusLabel.innerText = '接続試行中';
+    socket = new WebSocket(urlBox.value);
+
+    socket.onopen = function () {
+        updateState();
+        addLogEntry('接続開始', true);
+    };
+
+    socket.onclose = function () {
+        updateState();
+        addLogEntry('接続終了', true);
+    };
+
+    socket.onmessage = function (event) {
+        addLogEntry(event.data, false, true);
+    };
+
+    socket.onerror = function (event) {
+        updateState();
+        addLogEntry(`エラー: ${event.message}`, true);
+    };
+}
+
+/// <summary>
+/// WebSocket接続を終了する関数
+/// </summary>
+function disconnectWebSocket() {
+    if (socket.readyState !== WebSocket.OPEN) {
+        alert("ソケットは接続状態ではありません");
+    } else {
+        socket.close();
+    }
+}
+
+/// <summary>
+/// メッセージを送信する関数
+/// </summary>
+function sendMessage() {
+    if (socket.readyState !== WebSocket.OPEN) {
+        alert("ソケットは接続状態ではありません");
+    } else {
+        const message = messageBox.value;
+        socket.send(message);
+        addLogEntry(message, true, false);
+    }
+}
+
+/// <summary>
+/// メッセージボックスの内容をクリアする関数
+/// </summary>
+function clearMessage() {
+    messageBox.value = '';
+}
+
+/// <summary>
+/// 通信ログテーブルに新しい行を追加する関数
+/// </summary>
+function addLogEntry(data, isClient = false, isServer = false) {
+    const row = document.createElement('tr');
+    const clientCell = document.createElement('td');
+    const serverCell = document.createElement('td');
+    const dataCell = document.createElement('td');
+
+    clientCell.innerText = isClient ? '〇' : '';
+    serverCell.innerText = isServer ? '〇' : '';
+    dataCell.innerText = data;
+
+    row.appendChild(clientCell);
+    row.appendChild(serverCell);
+    row.appendChild(dataCell);
+
+    logTableBody.appendChild(row);
+}
+
+/// <summary>
+/// ページ読み込み時にURLを初期化する関数
+/// </summary>
+function initializeUrl() {
+    const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const port = window.location.port ? `:${window.location.port}` : '';
+    const url = `${scheme}://${window.location.hostname}${port}/api/websocket/connect`;
+    urlBox.value = url;
+}
+
+// ページ読み込み時にURLを初期化
+window.onload = initializeUrl;
