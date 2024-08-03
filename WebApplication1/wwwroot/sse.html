@@ -4,10 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Server-Sent Events Example</title>
+    <style>
+        #messages {
+            height: 200px; /* 適当な高さを設定 */
+            overflow-y: auto; /* 縦スクロールバーを表示 */
+            border: 1px solid #ccc; /* 枠線を追加 */
+            padding: 10px; /* 内側の余白を追加 */
+        }
+
+        .message {
+            margin-bottom: 10px; /* 各メッセージの間に余白を追加 */
+        }
+    </style>
 </head>
 <body>
     <h1>Server-Sent Eventsの例</h1>
-    <div id="message">サーバーからのイベントを待っています...</div>
+    <button id="startButton" onclick="startSSE()">開始</button>
+    <button id="stopButton" onclick="stopSSE()" disabled>停止</button>
+    <div id="status">ステータス: 未接続</div>
+    <div id="messages"></div>
 
     <script src="sse.js"></script>
 </body>
