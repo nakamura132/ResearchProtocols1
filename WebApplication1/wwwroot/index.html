@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>こんにちは</title>
+    <title>Long Polling Example</title>
 </head>
 <body>
-    <h1>ASP.NET Core Web アプリへようこそ</h1>
+    <h1>ロングポーリングの例</h1>
+    <div id="message">サーバーからの応答を待っています...</div>
+    <button id="startButton" onclick="startPolling()">ポーリング開始</button>
+    <button id="stopButton" onclick="stopPolling()" disabled>ポーリング停止</button>
+    <div id="status">ステータス: 待機中</div>
+
+    <script src="longPolling.js"></script>
 </body>
 </html>
