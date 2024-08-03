@@ -9,6 +9,8 @@ var app = builder.Build();
 app.UseDefaultFiles();
 // 静的ファイルを提供
 app.UseStaticFiles();
+// WebSocketミドルウェアを有効化
+app.UseWebSockets();
 // コントローラーをマッピング
 app.MapControllers();
 

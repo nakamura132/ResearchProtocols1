@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Example</title>
+    <style>
+        #messages {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocketの例</h1>
+    <button id="startButton" onclick="startWebSocket()">開始</button>
+    <button id="stopButton" onclick="stopWebSocket()" disabled>停止</button>
+    <div id="status">ステータス: 未接続</div>
+    <div id="messages"></div>
+
+    <script src="websocket.js"></script>
+</body>
+</html>
