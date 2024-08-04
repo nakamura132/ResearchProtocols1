@@ -1,7 +1,11 @@
 
 using Microsoft.AspNetCore.WebSockets;
+using WebApplication1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// gRPC サービスの追加
+builder.Services.AddGrpc();
 
 // コントローラーサービスを追加
 builder.Services.AddControllers();
@@ -19,6 +23,9 @@ app.UseWebSockets();
 app.UseDefaultFiles();
 // 静的ファイルを提供
 app.UseStaticFiles();
+
+// gRPC サービスのマッピング
+app.MapGrpcService<GreeterService>();
 
 // コントローラーをマッピング
 app.MapControllers();
