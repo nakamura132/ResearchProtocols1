@@ -1,0 +1,40 @@
+{
+  "id": 1,
+  "name": "Delta",
+  "age": 28,
+  "address": {
+    "street": "456 Pine St",
+    "city": "Metrocity",
+    "state": "TX",
+    "zip": "54321"
+  },
+  "phoneNumbers": [
+    {
+      "type": "mobile",
+      "number": "555-123-4567"
+    }
+  ],
+  "email": "delta1234@example.com",
+  "isActive": true,
+  "preferences": {
+    "newsletter": true,
+    "notifications": true
+  },
+  "orders": [
+    {
+      "orderId": "F678",
+      "amount": 29.99,
+      "items": [
+        "Product A",
+        "Product B",
+        "Product C"
+      ]
+    }
+  ],
+  "comments": [
+    "Additional text to precisely adjust the file size.",
+    "Adding more content to meet the size requirement.",
+    "Extra characters included to achieve the target size."
+  ],
+  "extraData": "Extra text included here. This ensures that the file size reaches exactly 1 KB. Adding repetitive characters here to precisely adjust the size if needed. This helps achieve the file size requirement effectively."
+}
